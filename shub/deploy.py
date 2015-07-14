@@ -63,7 +63,7 @@ def cli(target, project, version, list_targets, debug, egg, build_egg):
             target = _get_target(target)
             project = _get_project(target, project)
             version = _get_version(target, version)
-            auth = (find_api_key(), '')
+            auth = _get_auth(target)
 
             if egg:
                 log("Using egg: %s" % egg)
@@ -73,7 +73,11 @@ def cli(target, project, version, list_targets, debug, egg, build_egg):
                 egg, tmpdir = _build_egg()
 
             _upload_egg(target, egg, project, version, auth)
-            click.echo("Run your spiders at: https://dash.scrapinghub.com/p/%s/" % project)
+
+            if 'scrapinghub.com' in target.get('url', ''):
+                click.echo("Run your spiders at: https://dash.scrapinghub.com/p/%s/" % project)
+            else:
+                click.echo('Success.')
     finally:
         if tmpdir:
             if debug:
@@ -115,6 +119,11 @@ def _get_target(name):
     except KeyError:
         raise fail("Unknown target: %s" % name)
 
+def _get_auth(target):
+    if 'username' in target:
+        return (target.get('username'), target.get('password', ''))
+
+    return (find_api_key(), '')
 
 def _url(target, action):
     return urljoin(target['url'], action)
@@ -136,7 +145,7 @@ def _upload_egg(target, eggpath, project, version, auth):
     data = {'project': project, 'version': version}
     files = {'egg': ('project.egg', open(eggpath, 'rb'))}
     url = _url(target, 'addversion.json')
-    log('Deploying to Scrapy Cloud project "%s"' % project)
+    log('Deploying to project "%s"' % project)
     return make_deploy_request(url, data, files, auth)
 
 
