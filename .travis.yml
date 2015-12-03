@@ -5,18 +5,32 @@ env:
 - TOXENV=pypy
 - TOXENV=py33
 - TOXENV=py34
+- TOXENV=build
 install:
 - "./.travis-workarounds.sh"
 - pip install -U tox twine wheel
 script: tox
 deploy:
-  provider: pypi
-  distributions: sdist bdist_wheel
-  user: scrapinghub
-  password:
-    secure: CJWIRI51KvqZrkPf7At1li+bbAZ/pN3iWRUPy0JaKWAC8O8B+GljXQxiXisPyLL1pIikcfLYZScOsKEhE+Uon/beeL1TPimVU3ELr7GYzuIkl3eK7quFUOiJ7glEggA5UyGNmk6goMVgaBQEOwT3gwH2LYwd1uFRvQsgIPY+tks=
-  on:
-    tags: true
-    all_branches: true
-    repo: scrapinghub/shub
-    condition: "$TOXENV == py27"
+  - provider: pypi
+    distributions: sdist bdist_wheel
+    user: scrapinghub
+    password:
+      secure: CJWIRI51KvqZrkPf7At1li+bbAZ/pN3iWRUPy0JaKWAC8O8B+GljXQxiXisPyLL1pIikcfLYZScOsKEhE+Uon/beeL1TPimVU3ELr7GYzuIkl3eK7quFUOiJ7glEggA5UyGNmk6goMVgaBQEOwT3gwH2LYwd1uFRvQsgIPY+tks=
+    on:
+      tags: true
+      all_branches: true
+      repo: scrapinghub/shub
+      condition: "$TOXENV == py27"
+  - provider: s3
+    access_key_id:
+      secure: dGkfCrv1s6n0Id22W9tAeTwrZK3HwJZOG0/GmwTaK1KsaG3i45Cy45kZCGFpuAWWo/kQg6+OwZ8AcDPB113D7tupUXNs2BDpR+q/uS2F3bzzGitRuFxzGhRDsHSz3tHOHHrn6CuHDvi/4QK42YbsdrbaWxkOX3jpP8+120FAE9A=
+    secret_access_key:
+      secure: TgYJ+Ry6YdyzZmVEK/xBMgMn4bw5hDsD2u5Wfl3AAC00FfYLwNbvO6iEVfpX53U3emO01sKC+2mUn5KKgn0hvhYMi/bNZA6nwtMZNTQCOrDz2BJag+x+odqHdy36CLgH55SdOMySuAJWEPSA8cWMVvLtf9Nzd3xG1vCbhDciDHE=
+    skip_cleanup: true
+    bucket: shub.scrapinghub.com
+    region: us-east-1
+    on:
+      tags: true
+      all_branches: true
+      repo: scrapinghub/shub
+      condition: "$TOXENV == build"
