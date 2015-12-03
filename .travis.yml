@@ -29,8 +29,8 @@ deploy:
     skip_cleanup: true
     bucket: shub.scrapinghub.com
     region: us-east-1
+    local_dir: dist
     on:
-      tags: true
       all_branches: true
       repo: scrapinghub/shub
       condition: "$TOXENV == build"
