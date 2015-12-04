@@ -30,6 +30,7 @@ deploy:
     bucket: shub.scrapinghub.com
     region: us-east-1
     local_dir: dist
+    upload-dir: "builds/$TRAVIS_COMMIT/$TRAVIS_OS_NAME"
     on:
       all_branches: true
       repo: scrapinghub/shub
